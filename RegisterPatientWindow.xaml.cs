@@ -1,31 +1,66 @@
 using System;
-using System.Data;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
-using Microsoft.Data.SqlClient;
-using DoAn.ClassData;
 
 namespace DoAn
 {
-    public partial class RegisterPatientWindow : Window
+    public partial class MainWindowPatient : Window
     {
-        Database db = new Database();
+        private string patientID;
+        private Button currentBtn;
 
-        public RegisterPatientWindow()
+        public MainWindowPatient(string id, string name)
         {
             InitializeComponent();
+            this.patientID = id;
+            this.txtDisplayName.Text = name;
+
+            // Tự động nạp trang Thông tin cá nhân khi khởi động
+            NavigateToPage(btnProfile, new PagePatientProfile(id));
         }
 
-        // 1. TitleBar Logic
-        private void TitleBar_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        // Xử lý điều hướng Menu
+        private void Menu_Click(object sender, RoutedEventArgs e)
         {
-            if (e.ClickCount == 2) btnMaximize_Click(sender, e);
-            else this.DragMove();
+            Button btn = sender as Button;
+            if (btn == null || btn == currentBtn) return;
+
+            string tag = btn.Tag.ToString();
+
+            switch (tag)
+            {
+                case "Profile":
+                    NavigateToPage(btn, new PagePatientProfile(patientID));
+                    break;
+                case "History":
+                    NavigateToPage(btn, new PagePatientHistory(patientID));
+                    break;
+                case "Bill":
+                    // MainFrame.Navigate(new PagePatientBill(patientID));
+                    break;
+                case "Home":
+                    // MainFrame.Navigate(new PageHome());
+                    break;
+            }
         }
 
-        private void btnMinimize_Click(object sender, RoutedEventArgs e) => this.WindowState = WindowState.Minimized;
+        private void NavigateToPage(Button btn, Page page)
+        {
+            if (currentBtn != null) currentBtn.IsEnabled = true;
+            
+            currentBtn = btn;
+            currentBtn.IsEnabled = false; // Vô hiệu hóa nút đang chọn để highlight
+            MainFrame.Navigate(page);
+        }
 
-        private void btnMaximize_Click(object sender, RoutedEventArgs e)
+        // Điều khiển cửa sổ
+        private void Minimize_Click(object sender, RoutedEventArgs e) 
+        {
+            this.WindowState = WindowState.Minimized;
+        }
+
+        private void Maximize_Click(object sender, RoutedEventArgs e)
         {
             if (this.WindowState == WindowState.Maximized)
             {
@@ -39,68 +74,30 @@ namespace DoAn
             }
         }
 
-        private void btnExit_Click(object sender, RoutedEventArgs e) => this.Close();
-
-        // 2. Register Logic
-        private void btnDoRegister_Click(object sender, RoutedEventArgs e)
+        private void Close_Click(object sender, RoutedEventArgs e) 
         {
-            // Kiểm tra validate cơ bản
-            if (string.IsNullOrWhiteSpace(txtRegUser.Text) || string.IsNullOrWhiteSpace(txtRegPass.Password))
+            Application.Current.Shutdown();
+        }
+
+        // Logic Đăng xuất trả về LoginWindow
+        private void btnLogOut_Click(object sender, RoutedEventArgs e)
+        {
+            var result = MessageBox.Show("Bạn có muốn đăng xuất không?", "Xác nhận",
+                MessageBoxButton.YesNo, MessageBoxImage.Question);
+
+            if (result == MessageBoxResult.Yes)
             {
-                MessageBox.Show("Vui lòng không để trống Tên đăng nhập và Mật khẩu!");
-                return;
+                var login = new LoginWindow(); // Khởi tạo lại màn hình Login
+                login.Show();
+                this.Close(); // Đóng cửa sổ hiện tại
             }
+        }
 
-            if (txtRegPass.Password != txtRegConfirmPass.Password)
-            {
-                MessageBox.Show("Mật khẩu xác nhận không trùng khớp!");
-                return;
-            }
-
-            try
-            {
-                // Kiểm tra tên đăng nhập đã tồn tại chưa
-                DataTable dt = db.GetData("SELECT * FROM ACCOUNTS WHERE Username = @u", new SqlParameter("@u", txtRegUser.Text.Trim()));
-                if (dt.Rows.Count > 0)
-                {
-                    MessageBox.Show("Tên đăng nhập đã tồn tại trong hệ thống!");
-                    return;
-                }
-
-                // Thực hiện Insert (Transaction giả định qua 2 câu lệnh)
-                string newID = "PAT" + new Random().Next(100, 999).ToString();
-                
-                string sqlPatient = @"INSERT INTO PATIENT (Patient_ID, Patient_Name, Gender, Day_Of_Birth, Phone, CID, Address, Curr_Condition) 
-                                     VALUES (@id, @name, @gender, @dob, @phone, @cid, @addr, @cond)";
-                
-                SqlParameter[] p1 = {
-                    new SqlParameter("@id", newID),
-                    new SqlParameter("@name", txtRegName.Text.Trim()),
-                    new SqlParameter("@gender", cbRegGender.Text),
-                    new SqlParameter("@dob", dpRegDOB.SelectedDate ?? DateTime.Now),
-                    new SqlParameter("@phone", txtRegPhone.Text.Trim()),
-                    new SqlParameter("@cid", txtRegCID.Text.Trim()),
-                    new SqlParameter("@addr", "N/A"),
-                    new SqlParameter("@cond", "Active")
-                };
-
-                string sqlAccount = "INSERT INTO ACCOUNTS (Username, Password, Role, OwnerID) VALUES (@u, @p, 'Patient', @oid)";
-                SqlParameter[] p2 = {
-                    new SqlParameter("@u", txtRegUser.Text.Trim()),
-                    new SqlParameter("@p", txtRegPass.Password),
-                    new SqlParameter("@oid", newID)
-                };
-
-                if (db.Execute(sqlPatient, p1) && db.Execute(sqlAccount, p2))
-                {
-                    MessageBox.Show("Chúc mừng! Đăng ký tài khoản bệnh nhân thành công.");
-                    this.Close();
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Lỗi kết nối cơ sở dữ liệu: " + ex.Message);
-            }
+        // Hỗ trợ kéo di chuyển cửa sổ khi nhấn vào vùng Header xanh
+        protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
+        {
+            base.OnMouseLeftButtonDown(e);
+            if (e.ButtonState == MouseButtonState.Pressed) this.DragMove();
         }
     }
 }
