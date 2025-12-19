@@ -37,7 +37,7 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
-                        <Border Background="{TemplateBinding Background}" CornerRadius="0">
+                        <Border Background="{TemplateBinding Background}">
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
                     </ControlTemplate>
@@ -49,6 +49,28 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
+
+        <Style x:Key="PrimaryActionBtn" TargetType="Button">
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border" Background="{TemplateBinding Background}" 
+                                BorderBrush="{TemplateBinding BorderBrush}" 
+                                BorderThickness="{TemplateBinding BorderThickness}" 
+                                CornerRadius="12">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Opacity" Value="0.9"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </Window.Resources>
 
     <Border Margin="20" CornerRadius="25" Background="#F8FBFF">
@@ -58,118 +80,89 @@
 
         <Grid>
             <Grid.RowDefinitions>
-                <RowDefinition Height="40"/> <RowDefinition Height="*"/>    </Grid.RowDefinitions>
-            
+                <RowDefinition Height="40"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="260"/>
             </Grid.ColumnDefinitions>
 
-            <Grid Grid.Row="0" Grid.ColumnSpan="2" x:Name="TitleBar" Background="Transparent" MouseLeftButtonDown="TitleBar_MouseLeftButtonDown">
+            <Grid Grid.Row="0" Grid.ColumnSpan="2" Background="Transparent" MouseLeftButtonDown="TitleBar_MouseLeftButtonDown">
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,5,10,0">
                     <Button Content="—" Style="{StaticResource WindowControlBtn}" Click="btnMinimize_Click"/>
                     <Button x:Name="btnMax" Content="▢" Style="{StaticResource WindowControlBtn}" Click="btnMaximize_Click"/>
-                    <Button Content="✕" Style="{StaticResource WindowControlBtn}" Click="btnExit_Click" Foreground="#E53935">
-                        <Button.Style>
-                            <Style TargetType="Button" BasedOn="{StaticResource WindowControlBtn}">
-                                <Style.Triggers>
-                                    <Trigger Property="IsMouseOver" Value="True">
-                                        <Setter Property="Background" Value="#FFEBEE"/>
-                                    </Trigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Button.Style>
-                    </Button>
+                    <Button Content="✕" Style="{StaticResource WindowControlBtn}" Click="btnExit_Click" Foreground="#E53935"/>
                 </StackPanel>
             </Grid>
 
-            <StackPanel Grid.Row="1" Grid.Column="0" Margin="60,10,60,40">
-                <TextBlock Text="THÔNG TIN ĐĂNG KÝ" FontSize="30" FontWeight="Black" Foreground="#2E78A6" Margin="0,0,0,25"/>
+            <StackPanel Grid.Row="1" Grid.Column="0" Margin="60,0,60,40">
+                <TextBlock Text="THÔNG TIN ĐĂNG KÝ" FontSize="30" FontWeight="Black" Foreground="#2E78A6" Margin="0,0,0,20"/>
 
-                <UniformGrid Columns="1" VerticalAlignment="Top">
-                    <StackPanel Margin="0,5">
-                        <TextBlock Text="Tên đăng nhập *" Foreground="#666" Margin="5,0,0,5"/>
-                        <TextBox x:Name="txtRegUser" Style="{StaticResource ModernInputStyle}"/>
+                <StackPanel Margin="0,5">
+                    <TextBlock Text="Tên đăng nhập *" Foreground="#666" Margin="5,0,0,5"/>
+                    <TextBox x:Name="txtRegUser" Style="{StaticResource ModernInputStyle}"/>
+                </StackPanel>
+
+                <Grid Margin="0,5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/><ColumnDefinition Width="20"/><ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Column="0">
+                        <TextBlock Text="Họ tên *" Foreground="#666" Margin="5,0,0,5"/>
+                        <TextBox x:Name="txtRegName" Style="{StaticResource ModernInputStyle}"/>
                     </StackPanel>
-
-                    <Grid Margin="0,5">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="20"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <StackPanel Grid.Column="0">
-                            <TextBlock Text="Họ tên bệnh nhân *" Foreground="#666" Margin="5,0,0,5"/>
-                            <TextBox x:Name="txtRegName" Style="{StaticResource ModernInputStyle}"/>
-                        </StackPanel>
-                        <StackPanel Grid.Column="2">
-                            <TextBlock Text="Số điện thoại *" Foreground="#666" Margin="5,0,0,5"/>
-                            <TextBox x:Name="txtRegPhone" Style="{StaticResource ModernInputStyle}" MaxLength="10"/>
-                        </StackPanel>
-                    </Grid>
-
-                    <Grid Margin="0,5">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="20"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <StackPanel Grid.Column="0">
-                            <TextBlock Text="Số CCCD *" Foreground="#666" Margin="5,0,0,5"/>
-                            <TextBox x:Name="txtRegCID" Style="{StaticResource ModernInputStyle}" MaxLength="12"/>
-                        </StackPanel>
-                        <StackPanel Grid.Column="2">
-                            <TextBlock Text="Ngày sinh *" Foreground="#666" Margin="5,0,0,5"/>
-                            <DatePicker x:Name="dpRegDOB" Height="38" VerticalContentAlignment="Center"/>
-                        </StackPanel>
-                    </Grid>
-
-                    <StackPanel Margin="0,5">
-                        <TextBlock Text="Giới tính" Foreground="#666" Margin="5,0,0,5"/>
-                        <ComboBox x:Name="cbRegGender" Height="38" VerticalContentAlignment="Center">
-                            <ComboBoxItem Content="Male" IsSelected="True"/>
-                            <ComboBoxItem Content="Female"/>
-                        </ComboBox>
+                    <StackPanel Grid.Column="2">
+                        <TextBlock Text="Số điện thoại *" Foreground="#666" Margin="5,0,0,5"/>
+                        <TextBox x:Name="txtRegPhone" Style="{StaticResource ModernInputStyle}" MaxLength="10"/>
                     </StackPanel>
+                </Grid>
 
-                    <Grid Margin="0,5">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="20"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <StackPanel Grid.Column="0">
-                            <TextBlock Text="Mật khẩu *" Foreground="#666" Margin="5,0,0,5"/>
-                            <PasswordBox x:Name="txtRegPass" Height="38" VerticalContentAlignment="Center" Padding="12,0"/>
-                        </StackPanel>
-                        <StackPanel Grid.Column="2">
-                            <TextBlock Text="Xác nhận mật khẩu *" Foreground="#666" Margin="5,0,0,5"/>
-                            <PasswordBox x:Name="txtRegConfirmPass" Height="38" VerticalContentAlignment="Center" Padding="12,0"/>
-                        </StackPanel>
-                    </Grid>
-                </UniformGrid>
+                <Grid Margin="0,5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/><ColumnDefinition Width="20"/><ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Column="0">
+                        <TextBlock Text="Số CCCD *" Foreground="#666" Margin="5,0,0,5"/>
+                        <TextBox x:Name="txtRegCID" Style="{StaticResource ModernInputStyle}" MaxLength="12"/>
+                    </StackPanel>
+                    <StackPanel Grid.Column="2">
+                        <TextBlock Text="Ngày sinh *" Foreground="#666" Margin="5,0,0,5"/>
+                        <DatePicker x:Name="dpRegDOB" Height="38" VerticalContentAlignment="Center"/>
+                    </StackPanel>
+                </Grid>
+
+                <StackPanel Margin="0,5">
+                    <TextBlock Text="Giới tính" Foreground="#666" Margin="5,0,0,5"/>
+                    <ComboBox x:Name="cbRegGender" Height="38" VerticalContentAlignment="Center">
+                        <ComboBoxItem Content="Male" IsSelected="True"/>
+                        <ComboBoxItem Content="Female"/>
+                    </ComboBox>
+                </StackPanel>
+
+                <Grid Margin="0,5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/><ColumnDefinition Width="20"/><ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Column="0">
+                        <TextBlock Text="Mật khẩu *" Foreground="#666" Margin="5,0,0,5"/>
+                        <PasswordBox x:Name="txtRegPass" Height="38" Padding="12,0" VerticalContentAlignment="Center"/>
+                    </StackPanel>
+                    <StackPanel Grid.Column="2">
+                        <TextBlock Text="Xác nhận mật khẩu *" Foreground="#666" Margin="5,0,0,5"/>
+                        <PasswordBox x:Name="txtRegConfirmPass" Height="38" Padding="12,0" VerticalContentAlignment="Center"/>
+                    </StackPanel>
+                </Grid>
             </StackPanel>
 
             <Border Grid.Row="1" Grid.Column="1" Background="#2E78A6" CornerRadius="0,0,25,0">
                 <StackPanel VerticalAlignment="Center">
-                    <TextBlock Text="Chào mừng!" Foreground="White" FontSize="20" HorizontalAlignment="Center" Margin="0,0,0,10"/>
-                    <TextBlock Text="Bắt đầu hành trình chăm sóc sức khỏe của bạn." Foreground="#B3E5FC" TextWrapping="Wrap" TextAlignment="Center" Margin="20,0,20,40"/>
+                    <Button Content="ĐĂNG KÝ NGAY" Click="btnDoRegister_Click" Margin="25,10" Height="55" 
+                            Background="White" Foreground="#2E78A6" Style="{StaticResource PrimaryActionBtn}"/>
                     
-                    <Button Content="ĐĂNG KÝ NGAY" Click="btnDoRegister_Click" Margin="25,10" Height="55" Background="White" Foreground="#2E78A6" FontWeight="Bold" Cursor="Hand">
-                        <Button.Resources>
-                            <Style TargetType="Border">
-                                <Setter Property="CornerRadius" Value="12"/>
-                            </Style>
-                        </Button.Resources>
-                    </Button>
-                    
-                    <Button Content="QUAY LẠI" Click="btnExit_Click" Margin="25,10" Height="45" Background="Transparent" Foreground="White" BorderBrush="White" BorderThickness="1.5" Cursor="Hand">
-                        <Button.Resources>
-                            <Style TargetType="Border">
-                                <Setter Property="CornerRadius" Value="12"/>
-                            </Style>
-                        </Button.Resources>
-                    </Button>
+                    <Button Content="QUAY LẠI" Click="btnExit_Click" Margin="25,10" Height="45" 
+                            Background="Transparent" Foreground="White" BorderBrush="White" BorderThickness="1.5" 
+                            Style="{StaticResource PrimaryActionBtn}"/>
                 </StackPanel>
             </Border>
         </Grid>
