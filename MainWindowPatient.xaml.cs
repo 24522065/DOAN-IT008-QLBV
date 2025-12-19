@@ -1,68 +1,81 @@
+using System;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
-using DoAn.Pages; // Giả sử các trang con nằm trong folder Pages
+using System.Windows.Media;
 
 namespace DoAn
 {
     public partial class MainWindowPatient : Window
     {
         private string patientID;
-        private string fullName;
+        private string patientName;
+        private Button currentActiveButton;
 
         public MainWindowPatient(string id, string name)
         {
             InitializeComponent();
             this.patientID = id;
-            this.fullName = name;
+            this.patientName = name;
 
-            // Hiển thị thông tin lên giao diện
-            txtPatientName.Text = "Xin chào, " + name;
-            txtPatientID.Text = "ID: " + id;
+            // Hiển thị thông tin người dùng lên Sidebar
+            txtPatientName.Text = name;
 
-            // Mặc định load trang Profile (Trang có thể cập nhật)
-            LoadPage("Profile");
+            // Mặc định nạp trang Thông tin cá nhân khi vừa mở
+            SetActiveButton(btnProfile);
+            MainContent.Content = new PagePatientProfile(patientID);
         }
 
+        // Xử lý sự kiện Click Menu chung
         private void Menu_Click(object sender, RoutedEventArgs e)
         {
-            string tag = (sender as Button).Tag.ToString();
-            LoadPage(tag);
-        }
+            Button btn = sender as Button;
+            if (btn == null || btn == currentActiveButton) return;
 
-        private void LoadPage(string tag)
-        {
+            SetActiveButton(btn);
+            string tag = btn.Tag.ToString();
+
             switch (tag)
             {
+                case "Home":
+                    // MainContent.Content = new PageHome();
+                    break;
                 case "Profile":
-                    txtTitle.Text = "THÔNG TIN CÁ NHÂN";
-                    // Truyền ID vào trang Profile để truy vấn và cập nhật
-                    MainContainer.Content = new PagePatientProfile(patientID);
+                    MainContent.Content = new PagePatientProfile(patientID);
                     break;
                 case "History":
-                    txtTitle.Text = "HỒ SƠ BỆNH ÁN (CHỈ XEM)";
-                    // Trang này bạn thiết lập IsReadOnly="True" cho DataGrid
-                    MainContainer.Content = new PagePatientHistory(patientID);
+                    MainContent.Content = new PagePatientHistory(patientID);
                     break;
                 case "Billing":
-                    txtTitle.Text = "HÓA ĐƠN THANH TOÁN (CHỈ XEM)";
-                    MainContainer.Content = new PagePatientBilling(patientID);
-                    break;
-                default:
-                    txtTitle.Text = "TRANG CHỦ";
-                    MainContainer.Content = null; 
+                    MainContent.Content = new PagePatientBilling(patientID);
                     break;
             }
         }
 
-        // Các nút điều hướng hệ thống
+        // Hiệu ứng đánh dấu nút đang chọn (IsEnabled = false để kích hoạt Trigger trong XAML)
+        private void SetActiveButton(Button btn)
+        {
+            if (currentActiveButton != null)
+                currentActiveButton.IsEnabled = true;
+
+            currentActiveButton = btn;
+            currentActiveButton.IsEnabled = false; 
+        }
+
+        // Các nút điều khiển cửa sổ
         private void TitleBar_MouseLeftButtonDown(object sender, MouseButtonEventArgs e) => this.DragMove();
         private void Minimize_Click(object sender, RoutedEventArgs e) => this.WindowState = WindowState.Minimized;
         private void Close_Click(object sender, RoutedEventArgs e) => Application.Current.Shutdown();
+
         private void Logout_Click(object sender, RoutedEventArgs e)
         {
-            // Mở lại màn hình chọn vai trò hoặc Login
-            // new LoginWindow().Show();
-            this.Close();
+            if (MessageBox.Show("Bạn có chắc chắn muốn đăng xuất?", "Xác nhận", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+            {
+                // Mở lại cửa sổ chọn tài khoản (tùy thuộc vào tên class của bạn)
+                // CheckAccountWindow login = new CheckAccountWindow();
+                // login.Show();
+                this.Close();
+            }
         }
     }
 }
