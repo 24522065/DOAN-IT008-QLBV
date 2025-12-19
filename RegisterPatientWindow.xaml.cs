@@ -1,9 +1,9 @@
 using System;
+using System.Data;
 using System.Windows;
 using System.Windows.Input;
 using Microsoft.Data.SqlClient;
-using System.Data;
-using DoAn.ClassData; // Đảm bảo class Database nằm ở đây
+using DoAn.ClassData;
 
 namespace DoAn
 {
@@ -16,43 +16,60 @@ namespace DoAn
             InitializeComponent();
         }
 
-        // Kéo thả cửa sổ
-        protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
+        // 1. TitleBar Logic
+        private void TitleBar_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            base.OnMouseLeftButtonDown(e);
-            if (e.ButtonState == MouseButtonState.Pressed) this.DragMove();
+            if (e.ClickCount == 2) btnMaximize_Click(sender, e);
+            else this.DragMove();
         }
 
+        private void btnMinimize_Click(object sender, RoutedEventArgs e) => this.WindowState = WindowState.Minimized;
+
+        private void btnMaximize_Click(object sender, RoutedEventArgs e)
+        {
+            if (this.WindowState == WindowState.Maximized)
+            {
+                this.WindowState = WindowState.Normal;
+                btnMax.Content = "▢";
+            }
+            else
+            {
+                this.WindowState = WindowState.Maximized;
+                btnMax.Content = "❐";
+            }
+        }
+
+        private void btnExit_Click(object sender, RoutedEventArgs e) => this.Close();
+
+        // 2. Register Logic
         private void btnDoRegister_Click(object sender, RoutedEventArgs e)
         {
-            // 1. Kiểm tra để trống
-            if (string.IsNullOrWhiteSpace(txtRegUser.Text) || string.IsNullOrWhiteSpace(txtRegName.Text) || 
-                string.IsNullOrWhiteSpace(txtRegPass.Password))
+            // Kiểm tra validate cơ bản
+            if (string.IsNullOrWhiteSpace(txtRegUser.Text) || string.IsNullOrWhiteSpace(txtRegPass.Password))
             {
-                MessageBox.Show("Vui lòng nhập đầy đủ thông tin bắt buộc!");
+                MessageBox.Show("Vui lòng không để trống Tên đăng nhập và Mật khẩu!");
                 return;
             }
 
-            // 2. Kiểm tra mật khẩu khớp
             if (txtRegPass.Password != txtRegConfirmPass.Password)
             {
-                MessageBox.Show("Mật khẩu xác nhận không chính xác!");
+                MessageBox.Show("Mật khẩu xác nhận không trùng khớp!");
                 return;
             }
 
-            try {
-                // 3. Kiểm tra tên đăng nhập tồn tại
-                DataTable dtCheck = db.GetData("SELECT * FROM ACCOUNTS WHERE Username = @u", 
-                                    new SqlParameter("@u", txtRegUser.Text.Trim()));
-                if (dtCheck.Rows.Count > 0) {
-                    MessageBox.Show("Tên đăng nhập đã tồn tại!");
+            try
+            {
+                // Kiểm tra tên đăng nhập đã tồn tại chưa
+                DataTable dt = db.GetData("SELECT * FROM ACCOUNTS WHERE Username = @u", new SqlParameter("@u", txtRegUser.Text.Trim()));
+                if (dt.Rows.Count > 0)
+                {
+                    MessageBox.Show("Tên đăng nhập đã tồn tại trong hệ thống!");
                     return;
                 }
 
-                // 4. Tạo ID mới ngẫu nhiên
+                // Thực hiện Insert (Transaction giả định qua 2 câu lệnh)
                 string newID = "PAT" + new Random().Next(100, 999).ToString();
-
-                // 5. Câu lệnh SQL Insert (Dựa theo cấu trúc bảng bạn cung cấp)
+                
                 string sqlPatient = @"INSERT INTO PATIENT (Patient_ID, Patient_Name, Gender, Day_Of_Birth, Phone, CID, Address, Curr_Condition) 
                                      VALUES (@id, @name, @gender, @dob, @phone, @cid, @addr, @cond)";
                 
@@ -63,54 +80,27 @@ namespace DoAn
                     new SqlParameter("@dob", dpRegDOB.SelectedDate ?? DateTime.Now),
                     new SqlParameter("@phone", txtRegPhone.Text.Trim()),
                     new SqlParameter("@cid", txtRegCID.Text.Trim()),
-                    new SqlParameter("@addr", "Chưa cập nhật"),
-                    new SqlParameter("@cond", "New Registration")
+                    new SqlParameter("@addr", "N/A"),
+                    new SqlParameter("@cond", "Active")
                 };
 
-                // SQL cho bảng tài khoản
-                string sqlAcc = "INSERT INTO ACCOUNTS (Username, Password, Role, OwnerID) VALUES (@u, @p, 'Patient', @oid)";
+                string sqlAccount = "INSERT INTO ACCOUNTS (Username, Password, Role, OwnerID) VALUES (@u, @p, 'Patient', @oid)";
                 SqlParameter[] p2 = {
                     new SqlParameter("@u", txtRegUser.Text.Trim()),
                     new SqlParameter("@p", txtRegPass.Password),
                     new SqlParameter("@oid", newID)
                 };
 
-                // 6. Thực hiện lưu
-                if (db.Execute(sqlPatient, p1) && db.Execute(sqlAcc, p2)) {
-                    MessageBox.Show("Đăng ký thành công!");
+                if (db.Execute(sqlPatient, p1) && db.Execute(sqlAccount, p2))
+                {
+                    MessageBox.Show("Chúc mừng! Đăng ký tài khoản bệnh nhân thành công.");
                     this.Close();
                 }
             }
-            catch (Exception ex) {
-                MessageBox.Show("Lỗi: " + ex.Message);
+            catch (Exception ex)
+            {
+                MessageBox.Show("Lỗi kết nối cơ sở dữ liệu: " + ex.Message);
             }
         }
-
-                   // Nút Thu nhỏ
-            private void btnMinimize_Click(object sender, RoutedEventArgs e)
-            {
-                this.WindowState = WindowState.Minimized;
-            }
-            
-            // Nút Phóng to / Thu nhỏ lại
-            private void btnMaximize_Click(object sender, RoutedEventArgs e)
-            {
-                if (this.WindowState == WindowState.Maximized)
-                {
-                    this.WindowState = WindowState.Normal;
-                    btnMax.Content = "▢"; // Biểu tượng ô vuông đơn
-                }
-                else
-                {
-                    this.WindowState = WindowState.Maximized;
-                    btnMax.Content = "❐"; // Biểu tượng hai ô vuông chồng nhau
-                }
-            }
-            
-            // Nút Thoát (Đã có trong code cũ nhưng hãy đảm bảo nó hoạt động)
-            private void btnExit_Click(object sender, RoutedEventArgs e)
-            {
-                this.Close();
-            }
-                }
+    }
 }
