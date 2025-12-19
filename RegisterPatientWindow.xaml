@@ -6,14 +6,15 @@
         WindowStartupLocation="CenterScreen">
 
     <Window.Resources>
-        <Style x:Key="RoundedTextBox" TargetType="TextBox">
+        <Style x:Key="RoundedInput" TargetType="Control">
+            <Setter Property="Height" Value="35"/>
             <Setter Property="VerticalContentAlignment" Value="Center"/>
             <Setter Property="Padding" Value="10,0"/>
             <Setter Property="Template">
                 <Setter.Value>
-                    <ControlTemplate TargetType="TextBox">
+                    <ControlTemplate TargetType="Control">
                         <Border x:Name="border" CornerRadius="8" BorderBrush="#CCC" BorderThickness="1" Background="White">
-                            <ScrollViewer x:Name="PART_ContentHost"/>
+                            <ScrollViewer x:Name="PART_ContentHost" Margin="5,0"/>
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsFocused" Value="True">
@@ -25,68 +26,80 @@
                 </Setter.Value>
             </Setter>
         </Style>
-
-        <Style x:Key="ActionButton" TargetType="Button">
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="FontWeight" Value="Bold"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Border x:Name="border" CornerRadius="10" Background="{TemplateBinding Background}">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Cursor" Value="Hand"/>
-                                <Setter TargetName="border" Property="Opacity" Value="0.9"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
     </Window.Resources>
 
-    <Border Margin="20" CornerRadius="30">
-        <Border.Background>
-            <LinearGradientBrush EndPoint="1,1" StartPoint="0,0">
-                <GradientStop Color="#E0F2F7" Offset="0"/>
-                <GradientStop Color="#B3E5FC" Offset="1"/>
-            </LinearGradientBrush>
-        </Border.Background>
+    <Border Margin="20" CornerRadius="30" Background="#F0F8FF">
         <Border.Effect>
-            <DropShadowEffect BlurRadius="20" Opacity="0.4" ShadowDepth="5"/>
+            <DropShadowEffect BlurRadius="25" Opacity="0.3" ShadowDepth="0"/>
         </Border.Effect>
 
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="220"/>
+                <ColumnDefinition Width="250"/>
             </Grid.ColumnDefinitions>
 
-            <StackPanel Grid.Column="0" Margin="60,40">
-                <TextBlock Text="ĐĂNG KÝ TÀI KHOẢN" FontSize="32" FontWeight="ExtraBold" Foreground="#2E78A6" Margin="0,0,0,30"/>
-                
-                <Grid Margin="0,8">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="180"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-                    <TextBlock Text="Tên đăng nhập" VerticalAlignment="Center" FontSize="15" Foreground="#444"/>
-                    <TextBox x:Name="txtRegUser" Grid.Column="1" Height="35" Style="{StaticResource RoundedTextBox}"/>
+            <StackPanel Grid.Column="0" Margin="50,30">
+                <TextBlock Text="ĐĂNG KÝ TÀI KHOẢN" FontSize="28" FontWeight="ExtraBold" Foreground="#2E78A6" Margin="0,0,0,25"/>
+
+                <Grid Margin="0,5">
+                    <Grid.ColumnDefinitions><ColumnDefinition Width="150"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                    <TextBlock Text="Tên đăng nhập" VerticalAlignment="Center" Foreground="#555"/>
+                    <TextBox x:Name="txtRegUser" Grid.Column="1" Style="{StaticResource RoundedInput}"/>
                 </Grid>
 
-                <Grid Margin="0,8">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="180"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-                    <TextBlock Text="Họ tên bệnh nhân" VerticalAlignment="Center" FontSize="15" Foreground="#444"/>
-                    <TextBox x:Name="txtRegName" Grid.Column="1" Height="35" Style="{StaticResource RoundedTextBox}"/>
+                <Grid Margin="0,5">
+                    <Grid.ColumnDefinitions><ColumnDefinition Width="150"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                    <TextBlock Text="Họ tên" VerticalAlignment="Center" Foreground="#555"/>
+                    <TextBox x:Name="txtRegName" Grid.Column="1" Style="{StaticResource RoundedInput}"/>
                 </Grid>
 
-                <Grid Margin="0,8">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="180"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
+                <Grid Margin="0,5">
+                    <Grid.ColumnDefinitions><ColumnDefinition Width="150"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                    <TextBlock Text="Số điện thoại" VerticalAlignment="Center" Foreground="#555"/>
+                    <TextBox x:Name="txtRegPhone" Grid.Column="1" Style="{StaticResource RoundedInput}" MaxLength="10"/>
+                </Grid>
+
+                <Grid Margin="0,5">
+                    <Grid.ColumnDefinitions><ColumnDefinition Width="150"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                    <TextBlock Text="Số CCCD" VerticalAlignment="Center" Foreground="#555"/>
+                    <TextBox x:Name="txtRegCID" Grid.Column="1" Style="{StaticResource RoundedInput}" MaxLength="12"/>
+                </Grid>
+
+                <Grid Margin="0,5">
+                    <Grid.ColumnDefinitions><ColumnDefinition Width="150"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                    <TextBlock Text="Giới tính" VerticalAlignment="Center" Foreground="#555"/>
+                    <ComboBox x:Name="cbRegGender" Grid.Column="1" Height="35">
+                        <ComboBoxItem Content="Male" IsSelected="True"/>
+                        <ComboBoxItem Content="Female"/>
+                    </ComboBox>
+                </Grid>
+
+                <Grid Margin="0,5">
+                    <Grid.ColumnDefinitions><ColumnDefinition Width="150"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                    <TextBlock Text="Ngày sinh" VerticalAlignment="Center" Foreground="#555"/>
+                    <DatePicker x:Name="dpRegDOB" Grid.Column="1" Height="35"/>
+                </Grid>
+
+                <Grid Margin="0,5">
+                    <Grid.ColumnDefinitions><ColumnDefinition Width="150"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                    <TextBlock Text="Mật khẩu" VerticalAlignment="Center" Foreground="#555"/>
+                    <PasswordBox x:Name="txtRegPass" Grid.Column="1" Height="35"/>
+                </Grid>
+
+                <Grid Margin="0,5">
+                    <Grid.ColumnDefinitions><ColumnDefinition Width="150"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                    <TextBlock Text="Xác nhận MK" VerticalAlignment="Center" Foreground="#555"/>
+                    <PasswordBox x:Name="txtRegConfirmPass" Grid.Column="1" Height="35"/>
+                </Grid>
+            </StackPanel>
+
+            <Border Grid.Column="1" Background="#2E78A6" CornerRadius="0,30,30,0">
+                <StackPanel VerticalAlignment="Center">
+                    <Button Content="ĐĂNG KÝ" Click="btnDoRegister_Click" Margin="20,10" Height="50" Background="White" Foreground="#2E78A6" FontWeight="Bold" Cursor="Hand"/>
+                    <Button Content="THOÁT" Click="btnExit_Click" Margin="20,10" Height="50" Background="Transparent" Foreground="White" BorderBrush="White" BorderThickness="1" Cursor="Hand"/>
+                </StackPanel>
+            </Border>
+        </Grid>
+    </Border>
+</Window>
