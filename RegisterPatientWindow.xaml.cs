@@ -86,6 +86,31 @@ namespace DoAn
             }
         }
 
-        private void btnExit_Click(object sender, RoutedEventArgs e) => this.Close();
-    }
+                   // Nút Thu nhỏ
+            private void btnMinimize_Click(object sender, RoutedEventArgs e)
+            {
+                this.WindowState = WindowState.Minimized;
+            }
+            
+            // Nút Phóng to / Thu nhỏ lại
+            private void btnMaximize_Click(object sender, RoutedEventArgs e)
+            {
+                if (this.WindowState == WindowState.Maximized)
+                {
+                    this.WindowState = WindowState.Normal;
+                    btnMax.Content = "▢"; // Biểu tượng ô vuông đơn
+                }
+                else
+                {
+                    this.WindowState = WindowState.Maximized;
+                    btnMax.Content = "❐"; // Biểu tượng hai ô vuông chồng nhau
+                }
+            }
+            
+            // Nút Thoát (Đã có trong code cũ nhưng hãy đảm bảo nó hoạt động)
+            private void btnExit_Click(object sender, RoutedEventArgs e)
+            {
+                this.Close();
+            }
+                }
 }
