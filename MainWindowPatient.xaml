@@ -1,28 +1,28 @@
 <Window x:Class="DoAn.MainWindowPatient"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Hệ Thống Bệnh Nhân" Height="700" Width="1200"
+        Title="Hệ Thống Bệnh Nhân" Height="750" Width="1300"
         WindowStyle="None" AllowsTransparency="True" Background="Transparent"
         WindowStartupLocation="CenterScreen">
 
     <Window.Resources>
         <Style x:Key="SidebarButton" TargetType="Button">
             <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="Foreground" Value="#444"/>
-            <Setter Property="Height" Value="50"/>
+            <Setter Property="Foreground" Value="#555"/>
+            <Setter Property="Height" Value="55"/>
+            <Setter Property="FontSize" Value="15"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="HorizontalContentAlignment" Value="Left"/>
-            <Setter Property="Padding" Value="20,0,0,0"/>
-            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="Padding" Value="25,0,0,0"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
-                        <Border x:Name="border" Background="{TemplateBinding Background}" BorderThickness="5,0,0,0" CornerRadius="0,5,5,0">
-                            <ContentPresenter VerticalAlignment="Center"/>
+                        <Border x:Name="border" Background="{TemplateBinding Background}" BorderThickness="5,0,0,0">
+                            <ContentPresenter VerticalAlignment="Center" Margin="{TemplateBinding Padding}"/>
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="#F0F0F0"/>
+                                <Setter TargetName="border" Property="Background" Value="#F5F5F5"/>
                                 <Setter Property="Foreground" Value="#2E78A6"/>
                                 <Setter Property="Cursor" Value="Hand"/>
                             </Trigger>
@@ -36,63 +36,99 @@
                 </Setter.Value>
             </Setter>
         </Style>
+
+        <Style x:Key="ControlBtn" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Width" Value="45"/>
+            <Setter Property="Height" Value="35"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#40FFFFFF"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
     </Window.Resources>
 
     <Border Margin="10" CornerRadius="20" Background="White">
         <Border.Effect>
-            <DropShadowEffect BlurRadius="20" Opacity="0.2" ShadowDepth="0"/>
+            <DropShadowEffect BlurRadius="25" Opacity="0.2" ShadowDepth="0"/>
         </Border.Effect>
 
         <Grid>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="280"/> <ColumnDefinition Width="*"/>   </Grid.ColumnDefinitions>
+                <ColumnDefinition Width="280"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
 
             <Border Background="White" CornerRadius="20,0,0,20" BorderBrush="#EEE" BorderThickness="0,0,1,0">
                 <Grid>
                     <StackPanel Margin="0,40,0,0">
-                        <Ellipse Width="70" Height="70" Fill="#EEE" Margin="0,0,0,10"/>
-                        <TextBlock Text="Hi" HorizontalAlignment="Center" Foreground="Gray"/>
-                        <TextBlock x:Name="txtPatientName" Text="User Name" HorizontalAlignment="Center" FontSize="18" FontWeight="Bold" Margin="0,0,0,30"/>
+                        <Ellipse Width="80" Height="80" Fill="#F0F0F0" Margin="0,0,0,15"/>
+                        <TextBlock Text="Xin chào," HorizontalAlignment="Center" Foreground="Gray"/>
+                        <TextBlock x:Name="txtDisplayName" Text="Họ tên bệnh nhân" HorizontalAlignment="Center" FontWeight="Bold" FontSize="18" Foreground="#2E78A6" Margin="0,5,0,30"/>
                         
-                        <Separator Margin="20,0,20,20" Background="#EEE"/>
+                        <Separator Margin="30,0,30,25" Background="#EEE"/>
 
-                        <Button Content="🏠   Trang Chủ" Style="{StaticResource SidebarButton}" Click="Menu_Click" Tag="Home"/>
-                        <Button x:Name="btnProfile" Content="👤   Thông tin cá nhân" Style="{StaticResource SidebarButton}" Click="Menu_Click" Tag="Profile" IsEnabled="False"/>
-                        <Button Content="📄   Hồ sơ bệnh án" Style="{StaticResource SidebarButton}" Click="Menu_Click" Tag="History"/>
-                        <Button Content="💵   Hóa đơn thanh toán" Style="{StaticResource SidebarButton}" Click="Menu_Click" Tag="Billing"/>
+                        <Button x:Name="btnHome" Content="🏠   Trang Chủ" Style="{StaticResource SidebarButton}" Click="Menu_Click" Tag="Home"/>
+                        <Button x:Name="btnProfile" Content="👤   Thông tin cá nhân" Style="{StaticResource SidebarButton}" Click="Menu_Click" Tag="Profile"/>
+                        <Button x:Name="btnHistory" Content="📄   Hồ sơ bệnh án" Style="{StaticResource SidebarButton}" Click="Menu_Click" Tag="History"/>
+                        <Button x:Name="btnBill" Content="💵   Hóa đơn thanh toán" Style="{StaticResource SidebarButton}" Click="Menu_Click" Tag="Bill"/>
                     </StackPanel>
 
-                    <Button VerticalAlignment="Bottom" Margin="0,0,0,30" Style="{StaticResource SidebarButton}" Click="Logout_Click">
+                    <Button VerticalAlignment="Bottom" Margin="0,0,0,30" Style="{StaticResource SidebarButton}" Click="btnLogOut_Click">
                         <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="🚪" Margin="0,0,10,0"/>
-                            <TextBlock Text="Đăng xuất" Foreground="#D32F2F" FontWeight="Bold"/>
+                            <TextBlock Text="↪" FontSize="22" FontWeight="Bold" Foreground="#E53935" Margin="0,0,15,0"/>
+                            <TextBlock Text="Đăng xuất" VerticalAlignment="Center" FontWeight="Bold" Foreground="#E53935"/>
                         </StackPanel>
                     </Button>
                 </Grid>
             </Border>
 
             <Grid Grid.Column="1">
-                <Border Height="200" VerticalAlignment="Top" CornerRadius="0,20,0,0">
+                <Border Height="250" VerticalAlignment="Top" CornerRadius="0,20,0,0">
                     <Border.Background>
-                        <LinearGradientBrush EndPoint="1,0.5" StartPoint="0,0.5">
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
                             <GradientStop Color="#81D4FA" Offset="0"/>
                             <GradientStop Color="#0277BD" Offset="1"/>
                         </LinearGradientBrush>
                     </Border.Background>
-                    <TextBlock Text="BỆNH NHÂN" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,20,0,0" Foreground="White" FontSize="24" FontWeight="Bold" LetterSpacing="2"/>
+                    <TextBlock Text="HỆ THỐNG QUẢN LÝ BỆNH VIỆN" HorizontalAlignment="Center" Margin="0,40,0,0" Foreground="White" FontSize="24" FontWeight="Bold" LetterSpacing="3"/>
                 </Border>
 
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,10,15,0">
-                    <Button Content="—" Click="Minimize_Click" Background="Transparent" BorderThickness="0" Foreground="White" Width="30" FontSize="18"/>
-                    <Button Content="✕" Click="Close_Click" Background="Transparent" BorderThickness="0" Foreground="White" Width="30" FontSize="18"/>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,5,5,0">
+                    <Button Content="—" Style="{StaticResource ControlBtn}" Click="Minimize_Click"/>
+                    <Button x:Name="btnMax" Content="▢" Style="{StaticResource ControlBtn}" Click="Maximize_Click"/>
+                    <Button Content="✕" Style="{StaticResource ControlBtn}" Click="Close_Click">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource ControlBtn}">
+                                <Style.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Background" Value="#E53935"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
                 </StackPanel>
 
-                <Border Margin="40,80,40,40" Background="White" CornerRadius="30">
+                <Border Margin="40,110,40,40" Background="White" CornerRadius="30">
                     <Border.Effect>
-                        <DropShadowEffect BlurRadius="15" Opacity="0.1" ShadowDepth="5"/>
+                        <DropShadowEffect BlurRadius="20" Opacity="0.1" ShadowDepth="8" Color="Black"/>
                     </Border.Effect>
-                    
-                    <ContentControl x:Name="MainContent" Margin="20"/>
+                    <Frame x:Name="MainFrame" NavigationUIVisibility="Hidden" Margin="20"/>
                 </Border>
             </Grid>
         </Grid>
